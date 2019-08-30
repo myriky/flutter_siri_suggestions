@@ -11,7 +11,7 @@
 }
 
 
-NSString *kPluginName = @"flutter_siri_shortcuts";
+NSString *kPluginName = @"flutter_siri_suggestions";
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
     FlutterMethodChannel* channel = [FlutterMethodChannel
