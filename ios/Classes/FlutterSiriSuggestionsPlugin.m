@@ -22,8 +22,9 @@ NSString *kPluginName = @"flutter_siri_suggestions";
 }
 
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
+    
     if([@"becomeCurrent" isEqualToString:call.method]) {
-        [self becomeCurrent:call result:result];
+        return [self becomeCurrent:call result:result];
     }
     
     result(FlutterMethodNotImplemented);
@@ -42,13 +43,12 @@ NSString *kPluginName = @"flutter_siri_suggestions";
     NSString *contentDescription = [arguments objectForKey:@"contentDescription"];
     NSString *suggestedInvocationPhrase = [arguments objectForKey:@"suggestedInvocationPhrase"];
     
-    
     if (@available(iOS 9.0, *)) {
         
         NSUserActivity *activity = [[NSUserActivity alloc] initWithActivityType:kPluginName];
         
         [activity setEligibleForSearch:[isEligibleForSearch boolValue]];
-        
+
         if (@available(iOS 12.0, *)) {
             [activity setEligibleForPrediction:[isEligibleForPrediction boolValue]];
         }
@@ -60,14 +60,18 @@ NSString *kPluginName = @"flutter_siri_suggestions";
         attributes.contentDescription = contentDescription;
         
         if (@available(iOS 12.0, *)) {
+            
+            // SIMULATOR HAS NOT RESPOND SELECTOR
+            #if !(TARGET_IPHONE_SIMULATOR)
             activity.suggestedInvocationPhrase = suggestedInvocationPhrase;
+            #endif
+            
         }
         activity.contentAttributeSet = attributes;
-        
+
         UIViewController* viewController = [[[[UIApplication sharedApplication] delegate] window] rootViewController];
         
         viewController.userActivity = activity;
-        
         
         [activity becomeCurrent];
     }

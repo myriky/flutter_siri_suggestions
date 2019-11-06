@@ -28,7 +28,7 @@ class _MyAppState extends State<MyApp> {
         onLaunch: (Map<String, dynamic> message) async {
       //Awaken from Siri Suggestion
 
-      ///// TO DO : Example
+      ///// TO DO : do something!
     });
   }
 
