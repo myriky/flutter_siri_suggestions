@@ -23,26 +23,22 @@ import 'package:flutter_siri_suggestions/flutter_siri_suggestions.dart';
 Example :
 
 ```dart
-FlutterSiriSuggestions.instance.buildActivity(FlutterSiriActivity(
-        "Open App 👨‍💻",
-        isEligibleForSearch: true,
-        isEligibleForPrediction: true,
-        contentDescription: "Did you enjoy that?",
-        suggestedInvocationPhrase: "open my app"));
+FlutterSiriSuggestions.instance.buildActivity(
+  FlutterSiriActivity(
+     "Open App 👨‍💻",
+     isEligibleForSearch: true,
+     isEligibleForPrediction: true,
+     contentDescription: "Did you enjoy that?",
+     suggestedInvocationPhrase: "open my app"
+  )
+);
 
-    FlutterSiriSuggestions.instance.configure(
-        onLaunch: (Map<String, dynamic> message) async {
-      //Awaken from Siri Suggestion
-
-      //Do what you want :)
-    });
-```
-
-```dart
-static void launch({String androidAppId, String iOSAppId}) async {
-    await _channel.invokeMethod(
-        'openappstore', {'android_id': androidAppId, 'ios_id': iOSAppId});
+FlutterSiriSuggestions.instance.configure(
+  onLaunch: (Map<String, dynamic> message) async {
+      // Awaken from Siri Suggestion
+      // Do what you want :)
   }
+);
 ```
 
 call buildActivity method if you want.
