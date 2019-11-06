@@ -10,7 +10,6 @@
     
 }
 
-
 NSString *kPluginName = @"flutter_siri_suggestions";
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
@@ -33,7 +32,6 @@ NSString *kPluginName = @"flutter_siri_suggestions";
 
 
 - (void)becomeCurrent:(FlutterMethodCall*)call result:(FlutterResult)result {
-    NSLog(@"becomeCurrent");
     
     NSDictionary *arguments = call.arguments;
     
@@ -60,7 +58,6 @@ NSString *kPluginName = @"flutter_siri_suggestions";
         
         activity.title = title;
         attributes.contentDescription = contentDescription;
-        //attributes.thumbnailData = UIImage(named: "thumbnail.png")?.jpegData(compressionQuality: 1.0)
         
         if (@available(iOS 12.0, *)) {
             activity.suggestedInvocationPhrase = suggestedInvocationPhrase;
@@ -100,21 +97,17 @@ NSString *kPluginName = @"flutter_siri_suggestions";
 
 
 - (void)applicationWillEnterForeground:(UIApplication *)application {
-    NSLog(@"applicationWillEnterForeground");
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application {
-    NSLog(@"applicationDidEnterBackground");
     
 }
 
 - (BOOL)application:(UIApplication *)application willContinueUserActivityWithType:(NSString *)userActivityType {
-    NSLog(@"willContinueUserActivityWithType");
     return true;
 }
 
 - (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray *))restorationHandler {
-    NSLog(@"continueUserActivity");
     if ([[userActivity activityType] isEqualToString:kPluginName]) {
         [self onAwake:userActivity];
         return true;
