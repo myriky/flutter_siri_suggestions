@@ -16,8 +16,8 @@ class FlutterSiriSuggestionsPlugin: MethodCallHandler {
   }
 
   override fun onMethodCall(call: MethodCall, result: Result) {
-    if (call.method == "getPlatformVersion") {
-      result.success("Android ${android.os.Build.VERSION.RELEASE}")
+    if (call.method == "becomeCurrent") {
+      print("ANDROID not support!")
     } else {
       result.notImplemented()
     }
