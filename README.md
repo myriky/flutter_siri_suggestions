@@ -2,6 +2,9 @@
 
 Flutter plugin for exposure on Siri Suggestions.
 
+<img src="https://img.shields.io/pub/v/flutter_siri_suggestions.svg" />
+<img src="https://img.shields.io/github/license/myriky/flutter_siri_suggestions" />
+
 Note: This plugin only work in iOS.
 
 <img width="200" src="https://user-images.githubusercontent.com/581861/68270186-e29d9680-009f-11ea-943e-50dc511c0858.png"><img width="200" src="https://user-images.githubusercontent.com/581861/68270188-e29d9680-009f-11ea-8729-a1ed7f4befa2.png"><img width="200" src="https://user-images.githubusercontent.com/581861/68270221-f812c080-009f-11ea-9be2-18d5bbf8f3b7.png">
