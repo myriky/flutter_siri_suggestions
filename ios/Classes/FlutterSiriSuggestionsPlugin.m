@@ -7,7 +7,7 @@
 
 @implementation FlutterSiriSuggestionsPlugin {
     FlutterMethodChannel *_channel;
-    
+    NSMutableSet *_keySet;
 }
 
 NSString *kPluginName = @"flutter_siri_suggestions";
@@ -36,8 +36,11 @@ NSString *kPluginName = @"flutter_siri_suggestions";
     
     NSDictionary *arguments = call.arguments;
     
+    NSAssert( ([arguments objectForKey:@"key"] != nil), @"key must not nil!");
     
     NSString *title = [arguments objectForKey:@"title"];
+    NSString *key = [arguments objectForKey:@"key"];
+    
     NSNumber *isEligibleForSearch = [arguments objectForKey:@"isEligibleForSearch"];
     NSNumber *isEligibleForPrediction = [arguments objectForKey:@"isEligibleForPrediction"];
     NSString *contentDescription = [arguments objectForKey:@"contentDescription"];
@@ -45,7 +48,7 @@ NSString *kPluginName = @"flutter_siri_suggestions";
     
     if (@available(iOS 9.0, *)) {
         
-        NSUserActivity *activity = [[NSUserActivity alloc] initWithActivityType:kPluginName];
+        NSUserActivity *activity = [[NSUserActivity alloc] initWithActivityType:[NSString stringWithFormat:@"%@-%@", kPluginName, key]];
         
         [activity setEligibleForSearch:[isEligibleForSearch boolValue]];
 
@@ -69,9 +72,11 @@ NSString *kPluginName = @"flutter_siri_suggestions";
         }
         activity.contentAttributeSet = attributes;
 
-        UIViewController* viewController = [[[[UIApplication sharedApplication] delegate] window] rootViewController];
         
-        viewController.userActivity = activity;
+        UIViewController *rootViewController = [[[[UIApplication sharedApplication] delegate] window] rootViewController];
+        [rootViewController setUserActivity:activity];
+        
+        [_keySet addObject:activity.activityType];
         
         [activity becomeCurrent];
     }
@@ -84,7 +89,7 @@ NSString *kPluginName = @"flutter_siri_suggestions";
         [userActivity resignCurrent];
         [userActivity invalidate];
     }
-    [_channel invokeMethod:@"onLaunch" arguments:[userActivity userInfo]];
+    [_channel invokeMethod:@"onLaunch" arguments:@{@"title": userActivity.title, @"key" : [userActivity.activityType stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@-", kPluginName] withString:@""], @"userInfo" : userActivity.userInfo}];
 }
 
 #pragma mark -
@@ -93,6 +98,7 @@ NSString *kPluginName = @"flutter_siri_suggestions";
     self = [super init];
     if(self) {
         _channel = channel;
+        _keySet = [[NSMutableSet alloc] init];
     }
     return self;
 }
@@ -112,7 +118,7 @@ NSString *kPluginName = @"flutter_siri_suggestions";
 }
 
 - (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray *))restorationHandler {
-    if ([[userActivity activityType] isEqualToString:kPluginName]) {
+    if([_keySet containsObject:[userActivity activityType]]) {
         [self onAwake:userActivity];
         return true;
     }

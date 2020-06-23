@@ -17,18 +17,21 @@ class _MyAppState extends State<MyApp> {
   }
 
   void initSuggestions() async {
-    FlutterSiriSuggestions.instance.buildActivity(FlutterSiriActivity(
-        "Open App 👨‍💻",
+    FlutterSiriSuggestions.instance.buildActivity(FlutterSiriActivity("Open App 👨‍💻", "firstActivity",
         isEligibleForSearch: true,
         isEligibleForPrediction: true,
         contentDescription: "Did you enjoy that?",
         suggestedInvocationPhrase: "open my app"));
 
-    FlutterSiriSuggestions.instance.configure(
-        onLaunch: (Map<String, dynamic> message) async {
+    FlutterSiriSuggestions.instance.configure(onLaunch: (Map<String, dynamic> message) async {
       //Awaken from Siri Suggestion
 
       ///// TO DO : do something!
+      if (message["key"] == "firstActivty") {
+        //firstSiriActivity
+      } else if (message["key"] == "secondActivity") {
+        //secondSiriActivity
+      }
     });
   }
 
