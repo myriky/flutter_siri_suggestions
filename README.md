@@ -29,6 +29,7 @@ Example :
 FlutterSiriSuggestions.instance.buildActivity(
   FlutterSiriActivity(
      "Open App 👨‍💻",
+     "firstActivity",
      isEligibleForSearch: true,
      isEligibleForPrediction: true,
      contentDescription: "Did you enjoy that?",
@@ -39,7 +40,16 @@ FlutterSiriSuggestions.instance.buildActivity(
 FlutterSiriSuggestions.instance.configure(
   onLaunch: (Map<String, dynamic> message) async {
       // Awaken from Siri Suggestion
+      // message = {title: "Open App 👨‍💻", key: "firstActivity", userInfo: {}}
       // Do what you want :)
+
+      if (message["key"] == "firstActivty") {
+        //firstSiriActivity
+      } else if (message["key"] == "secondActivity") {
+        //secondSiriActivity
+      }
+
+
   }
 );
 ```
