@@ -1,6 +1,6 @@
 name: flutter_siri_suggestions
 description: Flutter plugin for exposure on Siri Suggestions also awake specific function by Siri.
-version: 1.0.3+hotfix1
+version: 1.0.2+hotfix1
 author: Chul-won Kim <riky@myriky.net>
 homepage: https://github.com/myriky/flutter_siri_suggestions
 
