@@ -36,8 +36,8 @@ class FlutterSiriSuggestions {
 
   static const MethodChannel _channel = const MethodChannel('flutter_siri_suggestions');
 
-  void buildActivity(FlutterSiriActivity activity) async {
-    await _channel.invokeMethod('becomeCurrent', <String, Object>{
+  Future<String> buildActivity(FlutterSiriActivity activity) async {
+    return await _channel.invokeMethod('becomeCurrent', <String, Object>{
       'title': activity.title,
       'key': activity.key,
       'contentDescription': activity.contentDescription,

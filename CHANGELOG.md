@@ -1,3 +1,8 @@
+## 1.0.2+hotfix1
+
+- missing build.gradle for ANDROID :'(
+- fix a problem when it register multiple activities at the same time. (buildActivity changed async function. it will return some information)
+
 ## 1.0.2
 
 - Support multiple SiriActivity.

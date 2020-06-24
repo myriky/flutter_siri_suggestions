@@ -72,16 +72,18 @@ NSString *kPluginName = @"flutter_siri_suggestions";
         }
         activity.contentAttributeSet = attributes;
 
-        
-        UIViewController *rootViewController = [[[[UIApplication sharedApplication] delegate] window] rootViewController];
-        [rootViewController setUserActivity:activity];
+        [[self rootViewController] setUserActivity:activity];
         
         [_keySet addObject:activity.activityType];
         
         [activity becomeCurrent];
+        
+        result(key);
+        return;
+
     }
-    
     result(nil);
+    
 }
 
 - (void)onAwake:(NSUserActivity*) userActivity {
@@ -101,6 +103,10 @@ NSString *kPluginName = @"flutter_siri_suggestions";
         _keySet = [[NSMutableSet alloc] init];
     }
     return self;
+}
+
+- (UIViewController*)rootViewController {
+    return [[[[UIApplication sharedApplication] delegate] window] rootViewController];
 }
 
 #pragma mark - Application

@@ -26,10 +26,11 @@ import 'package:flutter_siri_suggestions/flutter_siri_suggestions.dart';
 Example :
 
 ```dart
-FlutterSiriSuggestions.instance.buildActivity(
+
+await FlutterSiriSuggestions.instance.buildActivity(
   FlutterSiriActivity(
      "Open App 👨‍💻",
-     "firstActivity",
+     "mainActivity",
      isEligibleForSearch: true,
      isEligibleForPrediction: true,
      contentDescription: "Did you enjoy that?",
@@ -40,14 +41,29 @@ FlutterSiriSuggestions.instance.buildActivity(
 FlutterSiriSuggestions.instance.configure(
   onLaunch: (Map<String, dynamic> message) async {
       // Awaken from Siri Suggestion
-      // message = {title: "Open App 👨‍💻", key: "firstActivity", userInfo: {}}
+      // message = {title: "Open App 👨‍💻", key: "mainActivity", userInfo: {}}
       // Do what you want :)
 
-      if (message["key"] == "firstActivty") {
-        //firstSiriActivity
-      } else if (message["key"] == "secondActivity") {
-        //secondSiriActivity
+      switch (message["key"]) {
+        case "mainActivity":
+          __text = "No Beer 😨";
+          break;
+        case "beerActivity":
+          __text = "Let's Beer Time 🍻";
+          break;
+        case "searchActivity":
+          __text = "Search for meaning...";
+          break;
+        case "TalkActivity":
+          __text = "Let's talk about you 😘";
+          break;
+        default:
+          __text = "hmmmm...... made a typo";
       }
+
+      setState(() {
+        _text = __text;
+      });
 
 
   }
@@ -63,6 +79,5 @@ call buildActivity method if you want.
 [suggestedInvocationPhrase](https://developer.apple.com/documentation/foundation/nsuseractivity/2976237-suggestedinvocationphrase), only available iOS 12+
 
 <img width="300" src="https://docs-assets.developer.apple.com/published/10619043bf/ac199760-6ff9-489e-a3b9-af84428a1884.png">
-
 
 enjoy! 💃
