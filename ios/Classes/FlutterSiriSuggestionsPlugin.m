@@ -86,12 +86,12 @@ NSString *kPluginName = @"flutter_siri_suggestions";
     
 }
 
-- (void)onAwake:(NSUserActivity*) userActivity {
+- (void)onAwake:(NSUserActivity*) userActivity method:(NSString *) method {
     if (@available(iOS 9.0, *)) {
         [userActivity resignCurrent];
         [userActivity invalidate];
     }
-    [_channel invokeMethod:@"onLaunch" arguments:@{@"title": userActivity.title, @"key" : [userActivity.activityType stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@-", kPluginName] withString:@""], @"userInfo" : userActivity.userInfo}];
+    [_channel invokeMethod:method arguments:@{@"title": userActivity.title, @"key" : [userActivity.activityType stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@-", kPluginName] withString:@""], @"userInfo" : userActivity.userInfo}];
 }
 
 #pragma mark -
@@ -123,11 +123,13 @@ NSString *kPluginName = @"flutter_siri_suggestions";
     return true;
 }
 
-- (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray *))restorationHandler {
+- (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray *UIUserActivityRestoring))restorationHandler {
     if([_keySet containsObject:[userActivity activityType]]) {
-        [self onAwake:userActivity];
+        [self onAwake:userActivity method: @"onLaunch"];
         return true;
-    }
+    } else 
+      [self onAwake:userActivity method: @"failedToLaunchWithActivity"];
+      /* [_channel invokeMethod:@"failedToLaunchWithActivity" arguments:@{@"title": userActivity.title, @"key" : [userActivity.activityType stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@-", kPluginName] withString:@""], @"userInfo" : userActivity.userInfo}]; */
     return false;
     
     
