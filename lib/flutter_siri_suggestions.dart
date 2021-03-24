@@ -36,6 +36,7 @@ class FlutterSiriSuggestions {
   //       super();
 
   MessageHandler? _onLaunch;
+  Map<String, dynamic>? retryActivity;
 
   static const MethodChannel _channel =
       const MethodChannel('flutter_siri_suggestions');
@@ -56,10 +57,20 @@ class FlutterSiriSuggestions {
     _channel.setMethodCallHandler(_handleMethod);
   }
 
+  Future<void> retryLaunchWithActivity() async {
+    if (retryActivity != null) {
+      _onLaunch!(retryActivity!);
+      retryActivity = null;
+    }
+  }
+
   Future<dynamic> _handleMethod(MethodCall call) async {
     switch (call.method) {
       case "onLaunch":
         return _onLaunch!(call.arguments.cast<String, dynamic>());
+      case "failedToLaunchWithActivity":
+        retryActivity = call.arguments.cast<String, dynamic>();
+        break;
       default:
         throw UnsupportedError("Unrecognized JSON message");
     }
