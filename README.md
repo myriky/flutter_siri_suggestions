@@ -44,18 +44,20 @@ FlutterSiriSuggestions.instance.configure(
       // message = {title: "Open App 👨‍💻", key: "mainActivity", userInfo: {}}
       // Do what you want :)
 
+      print("called by ${message['key']} suggestion.");
+
       switch (message["key"]) {
         case "mainActivity":
-          __text = "No Beer 😨";
+          __text = "redirect to mainActivity";
           break;
         case "beerActivity":
-          __text = "Let's Beer Time 🍻";
+          __text = "redirect to beerActivity";
           break;
         case "searchActivity":
-          __text = "Search for meaning...";
+          __text = "redirect to searchActivity";
           break;
-        case "TalkActivity":
-          __text = "Let's talk about you 😘";
+        case "talkActivity":
+          __text = "redirect to talkActivity";
           break;
         default:
           __text = "hmmmm...... made a typo";
@@ -81,3 +83,13 @@ call buildActivity method if you want.
 <img width="300" src="https://docs-assets.developer.apple.com/published/10619043bf/ac199760-6ff9-489e-a3b9-af84428a1884.png">
 
 enjoy! 💃
+
+---
+
+## Contributors
+
+❤️
+
+| github                                       |
+| :------------------------------------------- |
+| [**@aaqibism**](https://github.com/aaqibism) |

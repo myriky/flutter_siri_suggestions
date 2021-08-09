@@ -10,7 +10,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String _text = 'Hey man! It\'s me, Bart Simpson! 🙋‍♂️';
+  String _text = 'added mainActivity, beerActivity suggestions 🙋‍♂️';
   @override
   void initState() {
     super.initState();
@@ -24,18 +24,20 @@ class _MyAppState extends State<MyApp> {
       ///// TO DO : do something!
       String __text;
 
+      print("called by ${message['key']} suggestion.");
+
       switch (message["key"]) {
         case "mainActivity":
-          __text = "No Beer 😨";
+          __text = "redirect to mainActivity";
           break;
         case "beerActivity":
-          __text = "Let's Beer Time 🍻";
+          __text = "redirect to beerActivity";
           break;
         case "searchActivity":
-          __text = "Search for meaning...";
+          __text = "redirect to searchActivity";
           break;
         case "talkActivity":
-          __text = "Let's talk about you 😘";
+          __text = "redirect to talkActivity";
           break;
         default:
           __text = "hmmmm...... made a typo";
@@ -47,18 +49,18 @@ class _MyAppState extends State<MyApp> {
     });
 
     await FlutterSiriSuggestions.instance.buildActivity(FlutterSiriActivity(
-        "Open App 👨‍💻", "mainActivity",
+        "mainActivity Suggestion", "mainActivity",
         isEligibleForSearch: true,
         isEligibleForPrediction: true,
-        contentDescription: "Did you enjoy that?",
+        contentDescription: "Open mainActivity",
         suggestedInvocationPhrase: "open my app"));
 
     await FlutterSiriSuggestions.instance.buildActivity(FlutterSiriActivity(
-      "Let's BEER time 🍺",
+      "beerActivity Suggestion",
       "beerActivity",
       isEligibleForSearch: true,
       isEligibleForPrediction: true,
-      contentDescription: "Frost! 짠!",
+      contentDescription: "Open beerActivity 🍺",
       suggestedInvocationPhrase: "coooooool",
     ));
   }
@@ -74,43 +76,42 @@ class _MyAppState extends State<MyApp> {
           child: SizedBox(
             height: 200,
             child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
                 Center(
                   child: Text(_text),
                 ),
-                Row(
+                Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     TextButton(
-                      child: Text("add Third Activity"),
+                      child: Text("add searchActivity Suggestion"),
                       onPressed: () async {
                         String ret = await FlutterSiriSuggestions.instance
                             .buildActivity(FlutterSiriActivity(
-                          "Search 🧐",
+                          "searchActivity Suggestion",
                           "searchActivity",
                           isEligibleForSearch: true,
                           isEligibleForPrediction: true,
-                          contentDescription: "Search",
+                          contentDescription: "Open searchActivity 🧐",
                           suggestedInvocationPhrase: "Search",
                         ));
-                        print(ret);
+                        print("$ret suggestion added.");
                       },
                     ),
                     TextButton(
-                      child: Text("add Fourth Activity"),
+                      child: Text("add talkActivity Suggestion"),
                       onPressed: () async {
                         String ret = await FlutterSiriSuggestions.instance
                             .buildActivity(FlutterSiriActivity(
-                          "TALK TALK 💩",
+                          "talkActivity Suggestion",
                           "talkActivity",
                           isEligibleForSearch: true,
                           isEligibleForPrediction: true,
-                          contentDescription: "TALK TALK",
+                          contentDescription: "Open talkActivity 💩",
                           suggestedInvocationPhrase: "Talk",
                         ));
-                        print(ret);
+                        print("$ret suggestion added.");
                       },
                     )
                   ],

@@ -1,7 +1,7 @@
 name: flutter_siri_suggestions
 description: Flutter plugin for exposure on Siri Suggestions also awake specific function by Siri.
 version: 2.0.0
-author: Chul-won Kim <riky@myriky.net>
+author: Chul-won Kim <riky@handmade.software>
 homepage: https://github.com/myriky/flutter_siri_suggestions
 
 environment:
@@ -25,8 +25,10 @@ flutter:
   # be modified. They are used by the tooling to maintain consistency when
   # adding or updating assets for this project.
   plugin:
-    androidPackage: com.example.flutter_siri_suggestions
-    pluginClass: FlutterSiriSuggestionsPlugin
+    platforms:
+      ios:
+        pluginClass: FlutterSiriSuggestionsPlugin
+
   # To add assets to your plugin package, add an assets section, like this:
   # assets:
   #  - images/a_dot_burr.jpeg

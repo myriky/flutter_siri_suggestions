@@ -1,3 +1,7 @@
+## 2.0.0
+
+- migrate Null safety. thank you @aaqibism
+
 ## 1.0.2+hotfix1
 
 - missing build.gradle for ANDROID :'(
