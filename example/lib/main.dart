@@ -10,7 +10,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String _text = 'Hey man! It\'s me, Bart Simpson! 🙋‍♂️';
+  String _text = 'added mainActivity, beerActivity suggestions 🙋‍♂️';
   @override
   void initState() {
     super.initState();
@@ -18,23 +18,26 @@ class _MyAppState extends State<MyApp> {
   }
 
   void initSuggestions() async {
-    FlutterSiriSuggestions.instance.configure(onLaunch: (Map<String, dynamic> message) async {
+    FlutterSiriSuggestions.instance.configure(
+        onLaunch: (Map<String, dynamic> message) async {
       //Awaken from Siri Suggestion
       ///// TO DO : do something!
       String __text;
 
+      print("called by ${message['key']} suggestion.");
+
       switch (message["key"]) {
         case "mainActivity":
-          __text = "No Beer 😨";
+          __text = "redirect to mainActivity";
           break;
         case "beerActivity":
-          __text = "Let's Beer Time 🍻";
+          __text = "redirect to beerActivity";
           break;
         case "searchActivity":
-          __text = "Search for meaning...";
+          __text = "redirect to searchActivity";
           break;
         case "talkActivity":
-          __text = "Let's talk about you 😘";
+          __text = "redirect to talkActivity";
           break;
         default:
           __text = "hmmmm...... made a typo";
@@ -45,18 +48,19 @@ class _MyAppState extends State<MyApp> {
       });
     });
 
-    await FlutterSiriSuggestions.instance.buildActivity(FlutterSiriActivity("Open App 👨‍💻", "mainActivity",
+    await FlutterSiriSuggestions.instance.buildActivity(FlutterSiriActivity(
+        "mainActivity Suggestion", "mainActivity",
         isEligibleForSearch: true,
         isEligibleForPrediction: true,
-        contentDescription: "Did you enjoy that?",
+        contentDescription: "Open mainActivity",
         suggestedInvocationPhrase: "open my app"));
 
     await FlutterSiriSuggestions.instance.buildActivity(FlutterSiriActivity(
-      "Let's BEER time 🍺",
+      "beerActivity Suggestion",
       "beerActivity",
       isEligibleForSearch: true,
       isEligibleForPrediction: true,
-      contentDescription: "Frost! 짠!",
+      contentDescription: "Open beerActivity 🍺",
       suggestedInvocationPhrase: "coooooool",
     ));
   }
@@ -65,51 +69,58 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-          appBar: AppBar(
-            title: const Text('Siri Suggestions Sample'),
+        appBar: AppBar(
+          title: const Text('Siri Suggestions Sample'),
+        ),
+        body: Center(
+          child: SizedBox(
+            height: 200,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: <Widget>[
+                Center(
+                  child: Text(_text),
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    TextButton(
+                      child: Text("add searchActivity Suggestion"),
+                      onPressed: () async {
+                        String ret = await FlutterSiriSuggestions.instance
+                            .buildActivity(FlutterSiriActivity(
+                          "searchActivity Suggestion",
+                          "searchActivity",
+                          isEligibleForSearch: true,
+                          isEligibleForPrediction: true,
+                          contentDescription: "Open searchActivity 🧐",
+                          suggestedInvocationPhrase: "Search",
+                        ));
+                        print("$ret suggestion added.");
+                      },
+                    ),
+                    TextButton(
+                      child: Text("add talkActivity Suggestion"),
+                      onPressed: () async {
+                        String ret = await FlutterSiriSuggestions.instance
+                            .buildActivity(FlutterSiriActivity(
+                          "talkActivity Suggestion",
+                          "talkActivity",
+                          isEligibleForSearch: true,
+                          isEligibleForPrediction: true,
+                          contentDescription: "Open talkActivity 💩",
+                          suggestedInvocationPhrase: "Talk",
+                        ));
+                        print("$ret suggestion added.");
+                      },
+                    )
+                  ],
+                )
+              ],
+            ),
           ),
-          body: Center(
-              child: SizedBox(
-                  height: 200,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      Center(
-                        child: Text(_text),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          FlatButton(
-                            child: Text("add Third Activity"),
-                            onPressed: () async {
-                              String ret = await FlutterSiriSuggestions.instance.buildActivity(FlutterSiriActivity("Search 🧐", "searchActivity",
-                                  isEligibleForSearch: true,
-                                  isEligibleForPrediction: true,
-                                  contentDescription: "Search",
-                                  suggestedInvocationPhrase: "Search"));
-                              print(ret);
-                            },
-                          ),
-                          FlatButton(
-                            child: Text("add Fourth Activity"),
-                            onPressed: () async {
-                              String ret = await FlutterSiriSuggestions.instance.buildActivity(FlutterSiriActivity(
-                                "TALK TALK 💩",
-                                "talkActivity",
-                                isEligibleForSearch: true,
-                                isEligibleForPrediction: true,
-                                contentDescription: "TALK TALK",
-                                suggestedInvocationPhrase: "Talk",
-                              ));
-                              print(ret);
-                            },
-                          )
-                        ],
-                      )
-                    ],
-                  )))),
+        ),
+      ),
     );
   }
 }
