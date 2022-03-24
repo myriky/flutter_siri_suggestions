@@ -22,11 +22,13 @@ class _MyAppState extends State<MyApp> {
   void initSuggestions() async {
     FlutterSiriSuggestions.instance.configure(
         onLaunch: (Map<String, dynamic> message) async {
+      debugPrint('[FlutterSiriSuggestions] [onLaunch] $message');
       //Awaken from Siri Suggestion
       ///// TO DO : do something!
       String __text;
 
-      print("[FlutterSiriSuggestions] Called by ${message['key']} suggestion.");
+      debugPrint(
+          "[FlutterSiriSuggestions] Called by ${message['key']} suggestion.");
 
       switch (message["key"]) {
         case "mainActivity":
@@ -50,7 +52,7 @@ class _MyAppState extends State<MyApp> {
       });
     });
 
-    await FlutterSiriSuggestions.instance.buildActivity(
+    await FlutterSiriSuggestions.instance.registerActivity(
         const FlutterSiriActivity("mainActivity Suggestion", "mainActivity",
             isEligibleForSearch: true,
             isEligibleForPrediction: true,
@@ -59,7 +61,7 @@ class _MyAppState extends State<MyApp> {
             userInfo: {"info": "sample"}));
 
     await FlutterSiriSuggestions.instance
-        .buildActivity(const FlutterSiriActivity(
+        .registerActivity(const FlutterSiriActivity(
       "beerActivity Suggestion",
       "beerActivity",
       isEligibleForSearch: true,
@@ -98,7 +100,7 @@ class _MyAppState extends State<MyApp> {
                       onPressed: () async {
                         FlutterSiriSuggestionsResult result =
                             await FlutterSiriSuggestions.instance
-                                .addActivity(const FlutterSiriActivity(
+                                .registerActivity(const FlutterSiriActivity(
                           "searchActivity Suggestion",
                           "searchActivity",
                           isEligibleForSearch: true,
@@ -132,14 +134,15 @@ class _MyAppState extends State<MyApp> {
                       ),
                       onPressed: () async {
                         FlutterSiriSuggestionsResult result =
-                            await FlutterSiriSuggestions.instance.addActivity(
-                                const FlutterSiriActivity(
+                            await FlutterSiriSuggestions.instance
+                                .registerActivity(const FlutterSiriActivity(
                                     "talkActivity Suggestion", "talkActivity",
                                     isEligibleForSearch: true,
                                     isEligibleForPrediction: true,
                                     contentDescription: "Open talkActivity 💩",
                                     suggestedInvocationPhrase: "Talk",
-                                    persistentIdentifier: "customID"));
+                                    persistentIdentifier: "customID",
+                                    userInfo: {"value": "helloworld"}));
 
                         showSnackBar(
                             "${result.key} suggestion added.\n(key: ${result.key}, persistentIdentifier: ${result.persistentIdentifier})",
