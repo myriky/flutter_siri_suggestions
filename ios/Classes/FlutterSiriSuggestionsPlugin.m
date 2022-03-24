@@ -7,10 +7,14 @@
 
 @implementation FlutterSiriSuggestionsPlugin {
     FlutterMethodChannel *_channel;
-    NSMutableSet *_keySet;
 }
 
 NSString *kPluginName = @"flutter_siri_suggestions";
+NSString *kFn_becomeCurrent = @"becomeCurrent";
+NSString *kFn_deleteAllSavedUserActivities = @"deleteAllSavedUserActivities";
+NSString *kFn_deleteSavedUserActivitiesWithPersistentIdentifier = @"deleteSavedUserActivitiesWithPersistentIdentifier";
+NSString *kFn_deleteSavedUserActivitiesWithPersistentIdentifiers = @"deleteSavedUserActivitiesWithPersistentIdentifiers";
+
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
     FlutterMethodChannel* channel = [FlutterMethodChannel
@@ -21,14 +25,60 @@ NSString *kPluginName = @"flutter_siri_suggestions";
     [registrar addMethodCallDelegate:instance channel:channel];
 }
 
+
+
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
     
-    if([@"becomeCurrent" isEqualToString:call.method]) {
+    if([kFn_becomeCurrent isEqualToString:call.method]) {
         return [self becomeCurrent:call result:result];
+    }
+
+    if([kFn_deleteAllSavedUserActivities isEqualToString:call.method]) {
+        return [self deleteAllSavedUserActivities:call result:result];
+    }
+    
+    if([kFn_deleteSavedUserActivitiesWithPersistentIdentifier isEqualToString:call.method]) {
+        return [self deleteSavedUserActivitiesWithPersistentIdentifier:call result:result];
+    }
+
+    if([kFn_deleteSavedUserActivitiesWithPersistentIdentifiers isEqualToString:call.method]) {
+        return [self deleteSavedUserActivitiesWithPersistentIdentifiers:call result:result];
     }
     
     result(FlutterMethodNotImplemented);
     
+}
+
+- (void)deleteAllSavedUserActivities:(FlutterMethodCall*)call result:(FlutterResult)result {
+    if (@available(iOS 12.0, *)) {
+        [NSUserActivity deleteAllSavedUserActivitiesWithCompletionHandler:^{
+            result(nil);
+        }];
+    } else {
+        result([FlutterError errorWithCode:@"UNAVAILABLE" message:@"deleteAllSavedUserActivities not available." details:nil]);
+    }
+}
+
+- (void)deleteSavedUserActivitiesWithPersistentIdentifier:(FlutterMethodCall*)call result:(FlutterResult)result {
+    
+    NSString *persistentIdentifier = call.arguments;
+    
+    [self _deleteSavedUserActivitiesWithPersistentIdentifiers:@[persistentIdentifier] completionHandler:^{
+        result(nil);
+    } failedHandler:^{
+        result([FlutterError errorWithCode:@"UNAVAILABLE" message:@"deleteSavedUserActivitiesWithPersistentIdentifiers not available." details:nil]);
+    }];
+}
+
+- (void)deleteSavedUserActivitiesWithPersistentIdentifiers:(FlutterMethodCall*)call result:(FlutterResult)result {
+    
+    NSArray *persistentIdentifiers = call.arguments;
+    
+    [self _deleteSavedUserActivitiesWithPersistentIdentifiers:persistentIdentifiers completionHandler:^{
+        result(nil);
+    } failedHandler:^{
+        result([FlutterError errorWithCode:@"UNAVAILABLE" message:@"deleteSavedUserActivitiesWithPersistentIdentifiers not available." details:nil]);
+    }];
 }
 
 
@@ -41,10 +91,16 @@ NSString *kPluginName = @"flutter_siri_suggestions";
     NSString *title = [arguments objectForKey:@"title"];
     NSString *key = [arguments objectForKey:@"key"];
     
+    NSDictionary *userInfo = [arguments objectForKey:@"userInfo"];    
     NSNumber *isEligibleForSearch = [arguments objectForKey:@"isEligibleForSearch"];
     NSNumber *isEligibleForPrediction = [arguments objectForKey:@"isEligibleForPrediction"];
     NSString *contentDescription = [arguments objectForKey:@"contentDescription"];
     NSString *suggestedInvocationPhrase = [arguments objectForKey:@"suggestedInvocationPhrase"];
+    NSString *persistentIdentifier = [arguments objectForKey:@"persistentIdentifier"];
+
+    if(persistentIdentifier == (NSString *)[NSNull null]) persistentIdentifier = key;
+        
+    
     
     if (@available(iOS 9.0, *)) {
         
@@ -60,9 +116,17 @@ NSString *kPluginName = @"flutter_siri_suggestions";
         
         
         activity.title = title;
+        
+        if(userInfo != (NSDictionary *)[NSNull null]) {
+            activity.userInfo = userInfo;
+        }
+        
         attributes.contentDescription = contentDescription;
         
+        
         if (@available(iOS 12.0, *)) {
+
+            activity.persistentIdentifier = persistentIdentifier;
             
             // SIMULATOR HAS NOT RESPOND SELECTOR
             #if !(TARGET_IPHONE_SIMULATOR)
@@ -71,14 +135,14 @@ NSString *kPluginName = @"flutter_siri_suggestions";
             
         }
         activity.contentAttributeSet = attributes;
+        NSLog(@"userInfo :%@", userInfo);
 
         [[self rootViewController] setUserActivity:activity];
-        
-        [_keySet addObject:activity.activityType];
-        
+                
         [activity becomeCurrent];
         
-        result(key);
+        result(@{@"key": key,
+                 @"persistentIdentifier": persistentIdentifier});
         return;
 
     }
@@ -91,7 +155,18 @@ NSString *kPluginName = @"flutter_siri_suggestions";
         [userActivity resignCurrent];
         [userActivity invalidate];
     }
-    [_channel invokeMethod:method arguments:@{@"title": userActivity.title, @"key" : [userActivity.activityType stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@-", kPluginName] withString:@""], @"userInfo" : userActivity.userInfo}];
+    
+    NSMutableDictionary *dict = [@{ @"title": userActivity.title, @"key" : [userActivity.activityType stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@-", kPluginName] withString:@""] } mutableCopy];    
+      
+    if(userActivity.userInfo) [dict setObject:userActivity.userInfo forKey:@"userInfo"];
+        
+    
+    if (@available(iOS 12.0, *)) {
+        if(userActivity.persistentIdentifier) [dict setObject:userActivity.persistentIdentifier forKey:@"persistentIdentifier"];
+    }
+    
+    [_channel invokeMethod:method arguments:dict];
+    
 }
 
 #pragma mark -
@@ -100,7 +175,6 @@ NSString *kPluginName = @"flutter_siri_suggestions";
     self = [super init];
     if(self) {
         _channel = channel;
-        _keySet = [[NSMutableSet alloc] init];
     }
     return self;
 }
@@ -124,17 +198,27 @@ NSString *kPluginName = @"flutter_siri_suggestions";
 }
 
 - (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray *UIUserActivityRestoring))restorationHandler {
-    if([_keySet containsObject:[userActivity activityType]]) {
+
+    if ([[userActivity activityType] hasPrefix:kPluginName]) {
         [self onAwake:userActivity method: @"onLaunch"];
         return true;
     } else 
       [self onAwake:userActivity method: @"failedToLaunchWithActivity"];
-      /* [_channel invokeMethod:@"failedToLaunchWithActivity" arguments:@{@"title": userActivity.title, @"key" : [userActivity.activityType stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@-", kPluginName] withString:@""], @"userInfo" : userActivity.userInfo}]; */
     return false;
     
     
 }
 
+#pragma mark - internal methods
 
+- (void) _deleteSavedUserActivitiesWithPersistentIdentifiers:(NSArray*)persistentIdentifiers completionHandler:(void(^)(void))successHandler failedHandler:(void(^)(void))failedHandler {
+    
+    if (@available(iOS 12.0, *)) {
+        [NSUserActivity deleteSavedUserActivitiesWithPersistentIdentifiers:persistentIdentifiers completionHandler:successHandler];
+    } else {
+        failedHandler();
+    }
+    
+}
 
 @end

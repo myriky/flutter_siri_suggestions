@@ -1,3 +1,9 @@
+## 2.1.0
+
+- improve structure. thanks to @smaho-engineering
+- add 'deleteSavedUserActivitiesWithPersistentIdentifiers / deleteSavedUserActivitiesWithPersistentIdentifier' function.
+- buildActivity going to deprecated.
+
 ## 2.0.0
 
 - migrate Null safety. thank you @aaqibism
