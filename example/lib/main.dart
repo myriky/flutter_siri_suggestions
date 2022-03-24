@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_siri_suggestions/flutter_siri_suggestions.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(const MyApp());
 
 class MyApp extends StatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   _MyAppState createState() => _MyAppState();
 }
@@ -24,7 +26,7 @@ class _MyAppState extends State<MyApp> {
       ///// TO DO : do something!
       String __text;
 
-      print("called by ${message['key']} suggestion.");
+      print("[FlutterSiriSuggestions] Called by ${message['key']} suggestion.");
 
       switch (message["key"]) {
         case "mainActivity":
@@ -48,14 +50,16 @@ class _MyAppState extends State<MyApp> {
       });
     });
 
-    await FlutterSiriSuggestions.instance.buildActivity(FlutterSiriActivity(
-        "mainActivity Suggestion", "mainActivity",
-        isEligibleForSearch: true,
-        isEligibleForPrediction: true,
-        contentDescription: "Open mainActivity",
-        suggestedInvocationPhrase: "open my app"));
+    await FlutterSiriSuggestions.instance.buildActivity(
+        const FlutterSiriActivity("mainActivity Suggestion", "mainActivity",
+            isEligibleForSearch: true,
+            isEligibleForPrediction: true,
+            contentDescription: "Open mainActivity",
+            suggestedInvocationPhrase: "open my app",
+            userInfo: {"info": "sample"}));
 
-    await FlutterSiriSuggestions.instance.buildActivity(FlutterSiriActivity(
+    await FlutterSiriSuggestions.instance
+        .buildActivity(const FlutterSiriActivity(
       "beerActivity Suggestion",
       "beerActivity",
       isEligibleForSearch: true,
@@ -72,23 +76,29 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: const Text('Siri Suggestions Sample'),
         ),
-        body: Center(
-          child: SizedBox(
-            height: 200,
+        body: Builder(builder: (context) {
+          return Center(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Center(
-                  child: Text(_text),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 50.0),
+                  child: Center(
+                    child: Text(_text),
+                  ),
                 ),
                 Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     TextButton(
-                      child: Text("add searchActivity Suggestion"),
+                      child: const Text(
+                        "add searchActivity Suggestion\n(key: searchActivity)",
+                        style: TextStyle(fontSize: 12),
+                      ),
                       onPressed: () async {
-                        String ret = await FlutterSiriSuggestions.instance
-                            .buildActivity(FlutterSiriActivity(
+                        FlutterSiriSuggestionsResult result =
+                            await FlutterSiriSuggestions.instance
+                                .addActivity(const FlutterSiriActivity(
                           "searchActivity Suggestion",
                           "searchActivity",
                           isEligibleForSearch: true,
@@ -96,31 +106,83 @@ class _MyAppState extends State<MyApp> {
                           contentDescription: "Open searchActivity 🧐",
                           suggestedInvocationPhrase: "Search",
                         ));
-                        print("$ret suggestion added.");
+
+                        showSnackBar(
+                            "${result.key} suggestion added.\n(key: ${result.key}, persistentIdentifier: ${result.persistentIdentifier})",
+                            context: context);
                       },
                     ),
                     TextButton(
-                      child: Text("add talkActivity Suggestion"),
+                      child: const Text(
+                          "remove searchActivity Suggestion by key\n(key: searchActivity)",
+                          style: TextStyle(fontSize: 12)),
                       onPressed: () async {
-                        String ret = await FlutterSiriSuggestions.instance
-                            .buildActivity(FlutterSiriActivity(
-                          "talkActivity Suggestion",
-                          "talkActivity",
-                          isEligibleForSearch: true,
-                          isEligibleForPrediction: true,
-                          contentDescription: "Open talkActivity 💩",
-                          suggestedInvocationPhrase: "Talk",
-                        ));
-                        print("$ret suggestion added.");
+                        FlutterSiriSuggestions.instance
+                            .deleteSavedUserActivitiesWithPersistentIdentifier(
+                                "searchActivity");
+
+                        showSnackBar("removed searchActivity suggestion.",
+                            context: context);
                       },
-                    )
+                    ),
+                    TextButton(
+                      child: const Text(
+                        "add talkActivity Suggestion\n(key: talkActivity, persistentIdentifier: customID)",
+                        style: TextStyle(fontSize: 12),
+                      ),
+                      onPressed: () async {
+                        FlutterSiriSuggestionsResult result =
+                            await FlutterSiriSuggestions.instance.addActivity(
+                                const FlutterSiriActivity(
+                                    "talkActivity Suggestion", "talkActivity",
+                                    isEligibleForSearch: true,
+                                    isEligibleForPrediction: true,
+                                    contentDescription: "Open talkActivity 💩",
+                                    suggestedInvocationPhrase: "Talk",
+                                    persistentIdentifier: "customID"));
+
+                        showSnackBar(
+                            "${result.key} suggestion added.\n(key: ${result.key}, persistentIdentifier: ${result.persistentIdentifier})",
+                            context: context);
+                      },
+                    ),
+                    TextButton(
+                      child: const Text(
+                          "remove talkActivity Suggestion by PersistentIdentifier\n(persistentIdentifier: customID)",
+                          style: TextStyle(fontSize: 12)),
+                      onPressed: () async {
+                        FlutterSiriSuggestions.instance
+                            .deleteSavedUserActivitiesWithPersistentIdentifier(
+                                "customID");
+
+                        showSnackBar("removed searchActivity suggestion.",
+                            context: context);
+                      },
+                    ),
+                    TextButton(
+                      child: const Text("remove all Suggestions",
+                          style: TextStyle(fontSize: 12)),
+                      onPressed: () async {
+                        FlutterSiriSuggestions.instance
+                            .deleteAllSavedUserActivities();
+
+                        showSnackBar("removed all suggestion.",
+                            context: context);
+                      },
+                    ),
                   ],
                 )
               ],
             ),
-          ),
-        ),
+          );
+        }),
       ),
+    );
+  }
+
+  void showSnackBar(String text, {required BuildContext context}) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(text, style: const TextStyle(fontSize: 12))),
     );
   }
 }
